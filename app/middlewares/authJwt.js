@@ -8,12 +8,16 @@ verifyToken = (req, res, next) => {
   let token = req.headers["x-access-token"];
 
   if (!token) {
-    return res.status(403).send({ message: "No token provided!" });
+    return res.status(403).send({
+      message: "No token provided!"
+    });
   }
 
   jwt.verify(token, config.secret, (err, decoded) => {
     if (err) {
-      return res.status(401).send({ message: "Unauthorized!" });
+      return res.status(401).send({
+        message: "Unauthorized!"
+      });
     }
     req.userId = decoded.id;
     next();
@@ -23,28 +27,35 @@ verifyToken = (req, res, next) => {
 isAdmin = (req, res, next) => {
   User.findById(req.userId).exec((err, user) => {
     if (err) {
-      res.status(500).send({ message: err });
+      res.status(500).send({
+        message: err
+      });
       return;
     }
 
-    Role.find(
-      {
-        _id: { $in: user.roles }
+    Role.find({
+        _id: {
+          $in: user.roles
+        }
       },
       (err, roles) => {
         if (err) {
-          res.status(500).send({ message: err });
+          res.status(500).send({
+            message: err
+          });
           return;
         }
 
         for (let i = 0; i < roles.length; i++) {
-          if (roles[i].name === "admin") {
+          if (roles[i].rolename === "admin") {
             next();
             return;
           }
         }
 
-        res.status(403).send({ message: "Require Admin Role!" });
+        res.status(403).send({
+          message: "Require Admin Role!"
+        });
         return;
       }
     );
@@ -54,28 +65,35 @@ isAdmin = (req, res, next) => {
 isMod = (req, res, next) => {
   User.findById(req.userId).exec((err, user) => {
     if (err) {
-      res.status(500).send({ message: err });
+      res.status(500).send({
+        message: err
+      });
       return;
     }
 
-    Role.find(
-      {
-        _id: { $in: user.roles }
+    Role.find({
+        _id: {
+          $in: user.roles
+        }
       },
       (err, roles) => {
         if (err) {
-          res.status(500).send({ message: err });
+          res.status(500).send({
+            message: err
+          });
           return;
         }
 
         for (let i = 0; i < roles.length; i++) {
-          if (roles[i].name === "mod") {
+          if (roles[i].rolename === "mod") {
             next();
             return;
           }
         }
 
-        res.status(403).send({ message: "Require Mod Role!" });
+        res.status(403).send({
+          message: "Require Mod Role!"
+        });
         return;
       }
     );
